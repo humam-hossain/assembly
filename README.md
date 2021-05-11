@@ -6,7 +6,13 @@
 ```bash
 nsam -f elf64 -o object_file.o assembly_file.asm
 ```
-> '-f' = format ; 'elf64' = x86_64 ; '-f elf64' = x86_64 format ; '-o object_file.o'  = output object file 
+> '-f' = format
+> 
+> 'elf64' = x86_64
+> 
+> '-f elf64' = x86_64 format
+> 
+> '-o object_file.o'  = output object file 
 
 **creating executable file from object file using linker**
 > ld=linker
