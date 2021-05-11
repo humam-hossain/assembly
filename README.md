@@ -15,11 +15,11 @@ nsam -f elf64 -o object_file.o assembly_file.asm
 > '-o object_file.o'  = output object file 
 
 **creating executable file from object file using linker**
-> ld=linker
-
 ```bash
 ld object_file.o -o exe_file
 ```
+> ld=linker
+
 **running executable file**
 ```bash
 ./exe_file
