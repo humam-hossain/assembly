@@ -23,29 +23,48 @@ ret
 ### Registers - 2 bytes/16 bit
 
 * **General Purpose registers - 4**
-  1. ax - 
-  2. bx - 
+  1. ax 
+    * __mov__ = is used to read from a memory address. cs code segment would be it's segment & it will read from offset of that segment.
+    ```assembly
+    mov ax, [memory_offset]
+    ```
+  2. bx
+    * __mov__ = is used to hold the offset address of the memory to write/access. ds register holds the segment byte.
+    ```assembly
+    mov bx, memory_offset
+    mov [bx], value
+    ``` 
   3. cx - this register is used for counting operations.
   4. dx - 
-
+  > we can set immediate values to general purpose registers.
+  >
   > General Purpose registers are divided by highs byte (ex. ah) and low bytes (ex. al)
 
-* **Special registers - total 9**
-  1. cs - code segment. it holds segment address of current memory.
-  2. ip - index pointer. it holds offset address of current memory. It's the second byte of memory address.
+* **Special registers - total 9**  
+  1. cs - code segment. it sets/holds segment address of current memory.
+  2. ip - index pointer. it sets/holds offset address of current memory. 
+  > Code segment & Index pointer read current memeory
+
   3. ss - stack segment. it holds segment address of current stack.
   4. sp - stack pointer. it holds offset address of current stack.
+  
+  > Stack segment & Stack pointer used for stack. Calling subroutines uses stack but labels don't.
+
   5. bp -  base pointer.
   6. si - source index
   7. di - destination index
-  8. ds - destination segment register. First byte of the memory address. to write in the memory this register is used. to manually change the register:
-  ```assembly
-  mov ax, [memory_address_segment]
-  mov ds, ax 
-  ```
-  9. es
+  8. ds - destination segment register. First byte of the memory address. 
+  > to write in the memory data segment register is used. 
+  9. es -
 
   > these registers are not divided into high and low byte.
+
+  * we cannot set immdiate value to segment registers, we have to use other register such as general purpose register to set the value of an segment register.
+    ```assembly
+    ; manually set the value of a segment register
+    mov general_reg, value
+    mov seg_reg, general_reg  
+    ```
 
 * There are 9 flags
 
