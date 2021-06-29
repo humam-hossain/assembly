@@ -32,13 +32,17 @@ ret
 
 * **Special registers - total 9**
   1. cs - code segment. it holds segment address of current memory.
-  2. ip - index pointer. it holds offset address of current memory.
+  2. ip - index pointer. it holds offset address of current memory. It's the second byte of memory address.
   3. ss - stack segment. it holds segment address of current stack.
   4. sp - stack pointer. it holds offset address of current stack.
   5. bp -  base pointer.
   6. si - source index
   7. di - destination index
-  8. ds - destination index
+  8. ds - destination segment register. First byte of the memory address. to write in the memory this register is used. to manually change the register:
+  ```assembly
+  mov ax, [memory_address_segment]
+  mov ds, ax 
+  ```
   9. es
 
   > these registers are not divided into high and low byte.
