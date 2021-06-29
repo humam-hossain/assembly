@@ -1,4 +1,49 @@
 # Notes on Assembly
+---
+## i8086 legacy processor architecture
+
+* This processor works on real mode/ legacy mode.
+* It's a 16 bit processor.
+* total 13 registers.
+* can work with 1 memory segment.
+
+### format
+```assembly
+org 100h    ; setting origin to 100h
+
+; code here
+
+ret
+```
+
+### Interrupt Vector Table
+* 0000:0000 is the memory address of interrupt vector table.
+* This table holds 256 different addresses corresponds to each interrupts.
+
+### Registers - 2 bytes/16 bit
+
+* **General Purpose registers - 4**
+  1. ax - 
+  2. bx - 
+  3. cx - this register is used for counting operations.
+  4. dx - 
+
+  > General Purpose registers are divided by highs byte (ex. ah) and low bytes (ex. al)
+
+* **Special registers - total 9**
+  1. cs - code segment. it holds segment address of current memory.
+  2. ip - index pointer. it holds offset address of current memory.
+  3. ss - stack segment. it holds segment address of current stack.
+  4. sp - stack pointer. it holds offset address of current stack.
+  5. bp -  base pointer.
+  6. si - source index
+  7. di - destination index
+  8. ds - destination index
+  9. es
+
+  > these registers are not divided into high and low byte.
+
+* There are 9 flags
 
 ## Build & Assembling with nasm x86_64
 
@@ -88,14 +133,9 @@ ld object_file.o -o exe_file
 ## Register Addressing - different ways of addressing modes
 
 ```assembly
-mov eax,4                 ;immediate addressing mode .The system call for write(sys_write)  
-;eax - general data accumulator register and 4 its write mode,tells the system to write
-
-mov ebx.1                 ; File descriptor 1 - standard output
-mov ecx,constant/varible  ; Put the offset of variable/constant in ecx
-mov edx                   ; its print mode, prints what we put in eax,4
-mov eax,1                 ; The system call for exit (sys_exit)
-mov ebx,0                 ; Exit with return code of 0 (no error)
+mov eax,4                 ;immediate addressing mode  
+mov ebx.1                 
+mov ecx,constant/varible  ; Put the offset of variable/constant in ecx          
 ```
 * direct addressing mode - variable/constant
 * direct offset addressing mode
