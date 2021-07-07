@@ -1,72 +1,5 @@
 # Notes on Assembly
 ---
-## i8086 legacy processor architecture
-
-* This processor works on real mode/ legacy mode.
-* It's a 16 bit processor.
-* total 13 registers.
-* can work with 1 memory segment.
-
-### format
-```assembly
-org 100h    ; setting origin to 100h
-
-; code here
-
-ret
-```
-
-### Interrupt Vector Table
-* 0000:0000 is the memory address of interrupt vector table.
-* This table holds 256 different addresses corresponds to each interrupts.
-
-### Registers - 2 bytes/16 bit
-
-* **General Purpose registers - 4**
-  1. ax 
-    * __mov__ = is used to read from a memory address. cs code segment would be it's segment & it will read from offset of that segment.
-    ```assembly
-    mov ax, [memory_offset]
-    ```
-  2. bx
-    * __mov__ = is used to hold the offset address of the memory to write/access. ds register holds the segment byte.
-    ```assembly
-    mov bx, memory_offset
-    mov [bx], value
-    ``` 
-  3. cx - this register is used for counting operations.
-  4. dx - 
-  > we can set immediate values to general purpose registers.
-  >
-  > General Purpose registers are divided by highs byte (ex. ah) and low bytes (ex. al)
-
-* **Special registers - total 9**  
-  1. cs - code segment. it sets/holds segment address of current memory.
-  2. ip - index pointer. it sets/holds offset address of current memory. 
-  > Code segment & Index pointer read current memeory
-
-  3. ss - stack segment. it holds segment address of current stack.
-  4. sp - stack pointer. it holds offset address of current stack.
-  
-  > Stack segment & Stack pointer used for stack. Calling subroutines uses stack but labels don't.
-
-  5. bp -  base pointer.
-  6. si - source index
-  7. di - destination index
-  8. ds - destination segment register. First byte of the memory address. 
-  > to write in the memory data segment register is used. 
-  9. es -
-
-  > these registers are not divided into high and low byte.
-
-  * we cannot set immdiate value to segment registers, we have to use other register such as general purpose register to set the value of an segment register.
-    ```assembly
-    ; manually set the value of a segment register
-    mov general_reg, value
-    mov seg_reg, general_reg  
-    ```
-
-* There are 9 flags
 
 ## Build & Assembling with nasm x86_64
 
@@ -92,6 +25,264 @@ ld object_file.o -o exe_file
 ```bash
 ./exe_file
 ```
+
+## i8086 legacy processor architecture
+
+* This processor works on real mode/ legacy mode.
+* It's a 16 bit processor.
+* total 13 registers.
+* can work with 1 memory segment.
+
+### format
+```assembly
+org 100h    ; setting origin to 100h
+
+; code here
+
+ret
+```
+### Interrupt Vector Table
+* 0000:0000 is the memory address of interrupt vector table.
+* This table holds 256 different addresses corresponds to each interrupts.
+
+### Registers - 2 bytes/16 bit
+
+* **General Purpose registers - 4**
+  1. ax - typically used as an acummulator & preferred for most operations.
+    * __mov__ = is used to read from a memory address. cs code segment would be it's segment & it will read from offset of that segment.
+    ```assembly
+    mov ax, [memory_offset]
+    ```
+  2. bx - base register, typically used to hold an address of a procedure/variable
+    * __mov__ = is used to hold the offset address of the memory to write/access. ds register holds the segment byte.
+    ```assembly
+    mov bx, memory_offset
+    mov [bx], value
+    ``` 
+  3. cx - this register is used for counting operations. typically used for looping.
+  4. dx - data register, typically used for multiplication & division.
+  > we can set immediate values to general purpose registers.
+  >
+  > General Purpose registers are divided by highs byte (ex. ah) and low bytes (ex. al)
+
+* **Segment registers - total 4**
+	the cpu has four segment registers used as base location for program instructions data or stack
+  1. cs - code segment. it sets/holds segment address of current memory.
+  2. ss - stack segment. it holds segment address of current stack.
+  3. ds - data segment register. First byte of the memory address. to write in the memory data segment register is used. 
+  4. es - extra segment/ additional base location for variables in memeory.
+
+* **Index registers - total 4**
+  The index registers contains offset from its segment registers.
+  
+  1. si - source index. it is used in copying strings. ```lodsb``` & ```stosb``` instructions use si register.
+  2. di - destination index also used in copying strings
+  3. sp - stack pointer. it holds offset address of current stack/ stack's top.
+  4. bp -  base pointer. it's the offset from the ss register to locate variables on the stack
+  
+* **Instruction pointer registers** 
+  1. ip - instruction pointer. it sets/holds offset address of current memory. it points to the next instruction that should be executed.
+  > Code segment & Index pointer read current memeory
+
+  * we cannot set immdiate value to segment registers, we have to use other register such as general purpose register to set the value of an segment register.
+    ```assembly
+    ; manually set the value of a segment register
+    mov general_reg, value
+    mov seg_reg, general_reg  
+    ```
+
+* **Flag Registers**
+	* There are 9 flags
+	
+### Flag states (x86)
+
+	* 1 = set
+	* 0 = reset/clear
+	
+	**There are two groups of flags**
+	1. control flags - control cpu instructions. 
+	2. status flags - reflect outcome of arithmatic & logical operations performed by cpu
+		* Overflow(of) - set when the result of an **singed arithmetic** operation is too large to fit into the destination.
+		* Sign (sf) - set when the result of an arithmetic or logical operation is **negative**
+		* Zero (zf) - set when the result of an arithmetic or logical operation is **zero**
+		* Carry (cf) - set when the result of an **unsinged arithmetic** operation is too large to fit into the destination.
+		* Parity (pf) - set if **least significant byte** int the result contains an **even number** of 1 bits. typically used for **error** checking.
+		* Auxiliary Carry (ac) - set when an arithmetic operation causes a **carry** from **bit 3 to bit 4 in an 8-bit operand** 
+		
+## x86 SIMD & Floating-point registers
+
+> SIMD = Single Instruction Multiple Data
+
+### MMX Registers
+
+* For advanced multimedia and communication applications.
+* Supports SIMD
+* Pentium Processors were first to have them.
+* Numbers: 8
+* Type: 64 bit
+
+* MMX instructions operate in perallel on data values contained in the MMX registers or do they appear to be seperate registers. MMX register names are in fact aliases to the same registers used by the floating point unit. 
+
+### XMM Registers
+
+* Numbers: 8
+* type: 128 bit
+* these are used by stream in SIMD extensions in the instruction set.
+
+### Floating-point unit
+
+* Floating-point unit is sometimes called x87 architecture. It can perform high speed floating point arithmetic.
+
+**data registers**
+* Numbers: 8 ST(1) to ST(8)
+* type: 80-bit
+* organized as stack
+
+**pointer registers**
+* Numbers : 2 (FPU Instruction Pointer & FPU Data Pointer)
+* type: 48 bit
+
+> FPU = Floating Point Unit
+
+**Control Registers**
+* Numbers: 3 (Tag Register, Control Register, Status register)
+* type : 16 bit
+
+* Op code register 
+
+## i80386 processor architecture(x86 32-bit)
+
+***Registers:***
+	1. General Purpose registers (32-bit) - 8
+	2. Segment Registers (16-bit) - 6
+	3. Instruction Pointer (EIP) - 1
+	4. Processor Status Flags Register (EFLAGS) - 1
+	
+### General Purpose Registers of i80386 (32 bit)
+	1. eax
+	2. ebx
+	3. ecx
+	4. edx
+	** specialized registers : these are index registers**
+	5. ebp
+	6. esp
+	7. esi
+	8. edi
+	
+### Segment Registers of i80386 (16-bit)
+	1. cs
+	2. ds
+	3. ss
+	4. es
+	5. fs
+	6. gs
+	
+### Instruction pointer register (32-bit)
+	1. eip
+	
+### Processor Status Flags Register (32-bit)
+	1. eflags
+
+## Pantium 4 microprocessor architecture (x86_64 bit/ x64)
+
+*** Registers :***
+	1. General purpose registers (64-bit) - 16
+	2. Instruction pointer register (64-bit) - 1
+	3. Processor Status Flags Register (64-bit) - 1
+### General purpose registers (64-bit)
+	1. rax
+	2. rbx
+	3. rcx
+	4. rdx
+	5. rbp
+	6. rsp
+	7. rsi
+	8. rdi
+	9. r8
+	10. r9
+	11. r10
+	12. r11
+	13. r12
+	14. r13
+	15. r14
+	16. r15
+
+### Instruction pointer register (64-bit)
+	1. rip
+	
+### Processor Status Flags Register (64-bit)
+	1. rflags
+	
+## Overview of x86 Memory Models
+
+1. Real mode
+
+### Real-Address Mode
+	* Only __1MB__ of memory can be addressed.
+	* From 00000 to fffff
+	* Processor can run only one program at a time
+	* Application programs can access any memory location.
+	
+### Protected Mode
+	* Processor can run only multiple programs at a time.
+	* Each running program is assigned __4GB__ of memory.
+	* Programs cannot access each other's code and data.
+	
+### Virtual-8086 Mode
+	* Processor creates a virtual 8086 machine with its own __1MB__ address space.
+	
+## x86 Integers
+
+***Syntex***
+```
++/- digits radix
+```
+
+### Radix table
+
+| Symbol | Meaning      |
+| ------ | ------------ |
+| H		 | Hexadecimal  |
+| r 	 | Encoded real |
+| q/o	 | Octal		|
+| t		 | Decimal		|
+| d		 | Decimal		|
+| y		 | Binary		|
+| b		 | binary		|
+
+### Integer Precedence
+
+1. () : Parantheses
+2. +,- : unary plus, unary minus
+3. \*,/ : Multiply, Divide
+4. MOD : Modulus
+5. +,- : Add, Subtract
+
+## x86 Directives
+
+* Assist and control assembly process.
+* Are also called __pseudo-ops__
+* Not part of the __instruction set__
+* They change the way code is assembled.
+
+Some directives:
+1. ```.code``` : Indicates the start of a code segment.
+2. ```.data``` : Indicates the start of a data segment.
+3. ```.stack``` : Indicates the start of a stack segment.
+4. ```.end``` : Marks the end of a module
+5. ```.dd```/```.dword``` : Allocate a double word (4 bytes) storage. 
+
+## x86 Instruction
+
+***Syntex***
+```
+[label:] mnemonic [operands] [;comment] 
+```
+
+* A statement that becomes executable when a program is assembled.
+* Are translated by assembler into machine language bytes.
+
+
 
 ### Memory segment - 3 types
 
