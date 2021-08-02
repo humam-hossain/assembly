@@ -44,4 +44,3 @@ test_str: db "Kernel booted, Welcome to heOS ...", 0xa, 0xd, 0
     ;; sector padding magic
     times 510 - ($ - $$) db 0   ; filling up with zeros until 510th byte
 
-    dw 0xaa55                   ; bios magic number to boot
